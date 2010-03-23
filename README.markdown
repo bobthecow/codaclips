@@ -32,8 +32,10 @@ you're at it.
 Usage
 -----
 
-0.  Install this script. Copy it somewhere like `/usr/local/bin` or `$HOME/bin`.
+0.  [Install this script][2]. Copy it somewhere like `/usr/local/bin` or `$HOME/bin`.
     Now `chmod a+x codaclips` to make it executable.
+    
+  [2]: http://github.com/bobthecow/codaclips/raw/master/codaclips
 
 1.  Quit Coda. Yeah, really. Coda can't deal with preferences changing while the
     app is running, so you've gotta quit before you sync.
