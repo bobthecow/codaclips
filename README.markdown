@@ -70,7 +70,24 @@ Usage
 Tips
 ----
 
+ *  If anything in this README doesn't make perfect sense to you, **this script
+    is probably not for you.** Please don't mess up your settings because you
+    don't know how to use a terminal.
+
+ *  Back up `~/Library/Preferences/com.panic.Coda.plist` before you do anything
+    drastic.
+
  *  **Try to only change clips on one machine at a time.** If you create a clip
     on `machine A`, then create a clip on `machine B` before you sync the new
     clip from `machine A`, your new clips are going to conflict. This means a
     manual merge, and it's a bit annoying.
+
+
+Warranty
+--------
+
+**This might void your warranty.** By using this script, there is a possibility
+that you will break things. Thus, this program is distributed WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. Use this and all similar scripts at your own risk.
+
