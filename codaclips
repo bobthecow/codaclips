@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# CodaClips import/export script.
+#
+# @author Justin Hileman {@link http://justinhileman.com}
+#
+# This script assumes you already have a Dropbox. If you don't, use this URL to open one (free!) and
+# we both get a little somethin':
+#
+#     https://www.dropbox.com/referrals/NTQzOTE3NDk
+#
+# If you really don't want a Dropbox (i.e. you'll sync everything yourself) change this variable:
+
+DEFAULT_CLIP_FILE="$HOME/Dropbox/.codaclips.plist"
+
+
+# Coda keeps all prefs in memory, and writes them to the preferences file on exit. This is a
+# destructive write, i.e. it doesn't check for changes before writing, or import a prefs file
+# if it changes while the app is running... Refuse to run if there's an active Coda process.
+
+if ps -awx|grep Coda.app|grep -v grep > /dev/null; then
+	echo "Unable to import or export clips while Coda is running."
+	exit 1
+fi
+
+
+if [ $# -eq 0 ] || [ $# -gt 2 ]; then
+	echo "Usage: $0 {import|export} [filename]"
+	exit 0
+else
+	ACTION=$1
+	
+	if [ $# -eq 1 ]; then
+		FILENAME="$DEFAULT_CLIP_FILE"
+	else
+		FILENAME=$2
+	fi
+fi
+
+case $ACTION in
+	export)
+		if [ ! -f $FILENAME ] || [ -w $FILENAME ]; then
+			defaults read com.panic.Coda GlobalClipGroups | python -c "import sys; sys.stdout.write(sys.stdin.read().strip()[1:-1].replace(' ', '').decode('hex'))" | plutil -convert xml1 -o "$FILENAME" -
+		else
+			echo "Unable to write: $FILENAME"
+			exit 1
+		fi
+		;;
+
+
+	import)
+		if [ -f $FILENAME ]; then
+			plutil -convert binary1 -o /tmp/.codaclips.bin "$FILENAME"
+			cat /tmp/.codaclips.bin | python -c "import sys; sys.stdout.write('<' + (lambda s: ' '.join([ s[i:i+8] for i in range(0,len(s),8) ]))(sys.stdin.read().encode('hex')) + '>')" > /tmp/.codaclips.hex
+			defaults write com.panic.Coda GlobalClipGroups "`cat /tmp/.codaclips.hex`"
+		else
+			echo "Unknown file: $FILENAME"
+			exit 1
+		fi
+		;;
+	
+	
+	*)
+		echo "Usage: $0 {import|export} [filename]"
+		exit 0
+		;;
+esac
