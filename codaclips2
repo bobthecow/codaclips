@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# CodaClips2 import/export script.
+#
+# @author Justin Hileman {@link http://justinhileman.com}
+#
+# This script assumes you already have a Dropbox. If you don't, use this URL to open one (free!) and
+# we both get a little somethin':
+#
+#     https://www.dropbox.com/referrals/NTQzOTE3NDk
+#
+# If you really don't want a Dropbox (i.e. you'll sync everything yourself) change this variable:
+
+DEFAULT_CLIP_DIR="$HOME/Dropbox/.codaclips"
+
+if [ $# -eq 0 ] || [ $# -gt 2 ]; then
+	echo "Usage: $0 {import|export} [dirname]"
+	exit 0
+else
+	ACTION=$1
+	
+	if [ $# -eq 1 ]; then
+		FILENAME="$DEFAULT_CLIP_DIR"
+	else
+		FILENAME=$2
+	fi
+fi
+
+# Create directory if it doesn't exist
+if [ ! -d $FILENAME ]; then
+	`mkdir -p "$FILENAME"`
+fi
+
+# Create Coda 2 Clips directory if it doesn't exist
+if [ ! -d $CODA_CLIP_DIR ]; then
+	`mkdir -p $HOME/Library/Application\ Support/Coda\ 2/Clips`
+fi
+
+case $ACTION in
+	export)
+		if [ ! -d $FILENAME ] || [ -w $FILENAME ]; then
+			`cp $HOME/Library/Application\ Support/Coda\ 2/Clips/* $FILENAME`
+		else
+			echo "Unable to write to $FILENAME"
+			exit 1
+		fi
+		;;
+
+
+	import)
+		if [ -d $FILENAME ]; then
+			`cp $FILENAME/* $HOME/Library/Application\ Support/Coda\ 2/Clips`
+		else
+			echo "Unknown file: $FILENAME"
+			exit 1
+		fi
+		;;
+	
+	
+	*)
+		echo "Usage: $0 {import|export} [dirname]"
+		exit 0
+		;;
+esac
